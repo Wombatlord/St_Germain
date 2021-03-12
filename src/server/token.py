@@ -1,7 +1,7 @@
 import json
 import os
 
-devFlag = True
+devFlag = False
 repl = not devFlag
 
 

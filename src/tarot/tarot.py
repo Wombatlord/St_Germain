@@ -221,7 +221,10 @@ async def tarotSpread(ctx: Context, numberOfCards):
     Card orientation is represented as 0 or 1 (card meanings are tied to orientation)
     Sends either the card name, or card name + * to represent a reversed card.
     """
-    if numberOfCards > CARD_LIMIT:
+    if numberOfCards <= 0:
+        numberOfCards = CARD_LIMIT
+
+    if numberOfCards > CARD_LIMIT or numberOfCards == 0:
         numberOfCards = CARD_LIMIT
 
     cards = await getRandomCards(numberOfCards)

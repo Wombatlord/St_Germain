@@ -1,0 +1,6 @@
+services:
+  python:
+    build: .
+    volumes:
+      - ./:/var/www/
+    command: "/var/www/bin/run.sh"

@@ -3,7 +3,6 @@
 .idea
 */__pycache__/
 *.pyc
-/data/stGermain.json
 .replit
 poetry.lock
 pyproject.toml

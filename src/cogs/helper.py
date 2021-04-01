@@ -18,3 +18,7 @@ class Helper(commands.Cog):
     @commands.command()
     async def guidance(self, ctx: Context):
         await ctx.send(self.tarotGuide)
+
+
+def setup(bot):
+    bot.add_cog(Helper(bot))

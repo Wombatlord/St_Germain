@@ -40,3 +40,7 @@ class Toy(commands.Cog):
                 "You may rely on it.",
             ]
             await ctx.send('Magic 8: ' + outlooks[eightBall])
+
+
+def setup(bot):
+    bot.add_cog(Toy(bot))

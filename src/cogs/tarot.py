@@ -10,7 +10,7 @@ from src.backend import requests, formatting, predicates
 from src.images.imageManipulators import combineImageListHorizontal, convertImage
 
 SPACER: str = '\n' + '__ ' * 22
-COMBINED_IMAGE_PATH: str = r"C:\Users\Owner\PycharmProjects\StGermain\images\combined.jpg"
+COMBINED_IMAGE_PATH: str = r"images/combined.jpg"
 SUITS: List[str] = [
     "Wands",
     "Cups",
@@ -50,6 +50,9 @@ class Tarot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.CARD_LIMIT = 7
+
+    def setup(self):
+        print('I am being loaded!')
 
     async def checkInvalid(self, ctx: Context, cardName):
         """
@@ -219,3 +222,7 @@ class Tarot(commands.Cog):
             SPACER,
         )
         return message
+
+
+def setup(bot):
+    bot.add_cog(Tarot(bot))

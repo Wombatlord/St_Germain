@@ -27,9 +27,6 @@ bot.add_cog(Toy(bot))
 # Get correct API token path.
 TOKEN = token.replOrLocal(token.repl, token.devFlag)
 
-# Channel ID for inChannel check.
-whiteLodgeChannel = 817823496352169985
-
 
 @bot.event
 async def on_ready():

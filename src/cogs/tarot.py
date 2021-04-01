@@ -175,10 +175,13 @@ class Tarot(commands.Cog):
         numberOfCards = int(numberOfCards)
         if numberOfCards > self.CARD_LIMIT or numberOfCards <= 0:
             numberOfCards = self.CARD_LIMIT
+            await ctx.send("You'll have 7 cards and you'll like it.")
 
         cards = await requests.getRandomCards(numberOfCards)
 
-        await ctx.send(f"Very well {str(ctx.author)}{SPACER}")
+        if numberOfCards < self.CARD_LIMIT:
+            await ctx.send(f"Very well {str(ctx.author)}{SPACER}")
+
         images = []
 
         # Determines card orientation and posts message in sequence.

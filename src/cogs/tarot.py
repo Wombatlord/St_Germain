@@ -1,17 +1,15 @@
 import io
-from typing import Iterable, Optional, Dict, List
+from typing import List
 
-import aiohttp
 import random
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
-from src.backend import requests, formatting
+from src.backend import requests, formatting, predicates
 
 from src.images.imageManipulators import combineImageListHorizontal, convertImage
 
 SPACER: str = '\n' + '__ ' * 22
-# CARD_LIMIT: int = 7
 COMBINED_IMAGE_PATH: str = r"C:\Users\Owner\PycharmProjects\StGermain\images\combined.jpg"
 SUITS: List[str] = [
     "Wands",
@@ -42,6 +40,7 @@ INVALID_MESSAGE: str = "Please check your input. Search is case sensitive.\n" \
                        "Images should be searched by complete name.\n" \
                        "Major Arcana: Wheel Of Fortune\n" \
                        "Minor Arcana: Knight of Swords\n"
+testID = 815785251879649311
 
 
 async def checkInvalid(ctx: Context, cardName):
@@ -95,7 +94,7 @@ class Tarot(commands.Cog):
         return True
 
     @commands.command()
-    # @inChannels(whiteLodgeChannel)
+    @predicates.inChannels(testID)
     async def meaning(self, ctx, *, message=''):
         """
             Responds to the user with the meanings of the provided car

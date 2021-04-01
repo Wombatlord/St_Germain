@@ -40,30 +40,10 @@ INVALID_MESSAGE: str = "Please check your input. Search is case sensitive.\n" \
                        "Images should be searched by complete name.\n" \
                        "Major Arcana: Wheel Of Fortune\n" \
                        "Minor Arcana: Knight of Swords\n"
+
+# Channel IDs
 testID = 815785251879649311
-
-
-async def checkInvalid(ctx: Context, cardName):
-    """
-    Responds to the discord user with an error message if they provide
-    a search term that is too generic
-    @param ctx:
-    @param cardName:
-    @return:
-    """
-    numbersOf = list(map(lambda s: f"{s} of", CARD_NUMBERS))
-    courtsOf = list(map(lambda s: f"{s} of", CARD_COURTS))
-    invalidTerms = CARD_NUMBERS + numbersOf + CARD_COURTS + courtsOf + SUITS + [""]
-    if cardName in invalidTerms:
-        await formatting.sendDelimited(ctx, INVALID_MESSAGE)
-        return False
-
-    # Single letter input is invalid
-    if len(cardName) == 1:
-        await formatting.sendDelimited(ctx, INVALID_MESSAGE)
-        return False
-
-    return True
+whiteLodgeChannel = 817823496352169985
 
 
 class Tarot(commands.Cog):
@@ -105,7 +85,7 @@ class Tarot(commands.Cog):
         searchTerm = message
         fullDeck = await requests.getFullDeck()
 
-        if not await checkInvalid(ctx, message) or fullDeck is None:
+        if not await self.checkInvalid(ctx, message) or fullDeck is None:
             return
 
         meanings = {}
@@ -123,6 +103,7 @@ class Tarot(commands.Cog):
             await formatting.sendDelimited(ctx, f"Reversed: {meanings.get('rev', '')}")
 
     @commands.command()
+    @predicates.inChannels(testID)
     async def image(self, ctx: Context, message: str):
         """
         Responds to the discord user with the image associated to a card
@@ -134,7 +115,7 @@ class Tarot(commands.Cog):
         cardName = message
         fullDeck = await requests.getFullDeck()
 
-        if not await checkInvalid(ctx, message) or fullDeck is None:
+        if not await self.checkInvalid(ctx, message) or fullDeck is None:
             return
 
         desiredCard = None
@@ -155,6 +136,7 @@ class Tarot(commands.Cog):
         await ctx.send(file=discord.File(cardImage, f"{cardName}.jpg"))
 
     @commands.command()
+    @predicates.inChannels(testID)
     async def describe(self, ctx: Context, message: str) -> None:
         """
         Retrieves the description of a card by its name.
@@ -182,6 +164,7 @@ class Tarot(commands.Cog):
             await formatting.sendDelimited(ctx, thisInvalidMessage)
 
     @commands.command()
+    @predicates.inChannels(testID)
     async def tarot(self, ctx: Context, numberOfCards):
         """
         Retrieves random cards as JSON.

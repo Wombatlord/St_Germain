@@ -1,7 +1,7 @@
 import json
 import os
 
-devFlag = False
+devFlag = True
 repl = not devFlag
 
 
@@ -11,13 +11,13 @@ def replOrLocal(environment, development):
         return TOKEN
 
     elif environment is False and development is True:
-        with open("data/stGermain.json", "r") as configjsonFile:
+        with open("data/stGermain.local.json", "r") as configjsonFile:
             configData = json.load(configjsonFile)
             TOKEN = configData["DEV_KEY"]
             return TOKEN
 
     else:
-        with open("data/stGermain.json", "r") as configjsonFile:
+        with open("data/stGermain.local.json", "r") as configjsonFile:
             configData = json.load(configjsonFile)
             TOKEN = configData["API_KEY"]
             return TOKEN

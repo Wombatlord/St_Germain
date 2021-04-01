@@ -1,10 +1,12 @@
 import discord
 import logging
 from discord.ext import commands
+
+from src.cogs.tarotCog import Tarot
 from src.server import keepAlive, token
-from src.tarot.magicEight import magicEightBall
-from src.tarot.tarot import tarotSpread, cardDesc, getCardImage, getMeanings
+from src.magicEight.magicEight import magicEightBall
 from src.guidance.userGuide import userGuide
+from src.recipes.recipe import respondForRecipe
 
 # Bot setup.
 logging.basicConfig()
@@ -17,6 +19,7 @@ bot = commands.Bot(
     description=description,
     intents=intents
 )
+bot.add_cog(Tarot(bot))
 
 # Get correct API token path.
 TOKEN = token.replOrLocal(token.repl, token.devFlag)
@@ -31,6 +34,13 @@ def inChannels(*args):
         return ctx.message.channel.id in args
 
     return commands.check(predicate)
+
+
+async def checkDM(ctx):
+    if ctx.author.bot:
+        return
+    if isinstance(ctx.channel, discord.channel.DMChannel):
+        await ctx.author.send("DM")
 
 
 @bot.event
@@ -58,32 +68,18 @@ async def add(ctx, left: int, right: int):
 
 
 @bot.command()
-@inChannels(whiteLodgeChannel)
-async def tarot(ctx, number=3):
-    await tarotSpread(ctx, number)
-
-
-@bot.command()
-@inChannels(whiteLodgeChannel)
-async def meaning(ctx, *, message=''):
-    await getMeanings(ctx, message)
-
-
-@bot.command()
-@inChannels(whiteLodgeChannel)
-async def describe(ctx, *, message=''):
-    await cardDesc(ctx, message)
-
-
-@bot.command()
-@inChannels(whiteLodgeChannel)
-async def image(ctx, *, message=''):
-    await getCardImage(ctx, message)
-
-
-@bot.command()
 async def magicEight(ctx, *, message='question'):
     await magicEightBall(ctx, message)
+
+
+@bot.command()
+async def createRecipe(ctx, *, message=''):
+    await respondForRecipe(ctx, message)
+
+
+@bot.listen()
+async def on_message(ctx):
+    await checkDM(ctx)
 
 
 if token.repl is True:

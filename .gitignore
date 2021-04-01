@@ -6,3 +6,5 @@
 .replit
 poetry.lock
 pyproject.toml
+
+/src/recipes/

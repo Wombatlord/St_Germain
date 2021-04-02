@@ -75,4 +75,3 @@ bot = Bot()
 cogs = ["src.cogs.helper", "src.cogs.tarot", "src.cogs.toys"]
 for cog in cogs:
     bot.load_extension(cog)
-

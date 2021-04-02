@@ -1,16 +1,18 @@
 import io
+import os
 from typing import List
 
 import random
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
-from src.backend import requests, formatting, predicates
-
+from src.utils import stringFormatting, predicates
+from src.adaptors.tarotRepository import get, HTTP, FS
 from src.images.imageManipulators import combineImageListHorizontal, convertImage
 
+Repository = get(HTTP)
 SPACER: str = '\n' + '__ ' * 22
-COMBINED_IMAGE_PATH: str = r"images/combined.jpg"
+COMBINED_IMAGE_PATH: str = r"tmp/combined.jpg"
 SUITS: List[str] = [
     "Wands",
     "Cups",
@@ -66,12 +68,12 @@ class Tarot(commands.Cog):
         courtsOf = list(map(lambda s: f"{s} of", CARD_COURTS))
         invalidTerms = CARD_NUMBERS + numbersOf + CARD_COURTS + courtsOf + SUITS + [""]
         if cardName in invalidTerms:
-            await formatting.sendDelimited(ctx, INVALID_MESSAGE)
+            await stringFormatting.sendDelimited(ctx, INVALID_MESSAGE)
             return False
 
         # Single letter input is invalid
         if len(cardName) == 1:
-            await formatting.sendDelimited(ctx, INVALID_MESSAGE)
+            await stringFormatting.sendDelimited(ctx, INVALID_MESSAGE)
             return False
 
         return True
@@ -80,13 +82,13 @@ class Tarot(commands.Cog):
     @predicates.inChannels(testID)
     async def meaning(self, ctx, *, message=''):
         """
-            Responds to the user with the meanings of the provided car
-            @param ctx:
-            @param message:
-            @return:
-            """
+        Responds to the user with the meanings of the provided car
+        @param ctx:
+        @param message:
+        @return:
+        """
         searchTerm = message
-        fullDeck = await requests.getFullDeck()
+        fullDeck = await Repository.getFullDeck()
 
         if not await self.checkInvalid(ctx, message) or fullDeck is None:
             return
@@ -100,10 +102,10 @@ class Tarot(commands.Cog):
                 }
 
         if not meanings:
-            await formatting.sendDelimited(ctx, INVALID_MESSAGE)
+            await stringFormatting.sendDelimited(ctx, INVALID_MESSAGE)
         else:
-            await formatting.sendDelimited(ctx, f"Upright: {meanings.get('up', '')}")
-            await formatting.sendDelimited(ctx, f"Reversed: {meanings.get('rev', '')}")
+            await stringFormatting.sendDelimited(ctx, f"Upright: {meanings.get('up', '')}")
+            await stringFormatting.sendDelimited(ctx, f"Reversed: {meanings.get('rev', '')}")
 
     @commands.command()
     @predicates.inChannels(testID)
@@ -116,7 +118,7 @@ class Tarot(commands.Cog):
         """
         global INVALID_MESSAGE
         cardName = message
-        fullDeck = await requests.getFullDeck()
+        fullDeck = await Repository.getFullDeck()
 
         if not await self.checkInvalid(ctx, message) or fullDeck is None:
             return
@@ -127,10 +129,10 @@ class Tarot(commands.Cog):
                 desiredCard = card
 
         if desiredCard is None:
-            await formatting.sendDelimited(ctx, INVALID_MESSAGE)
+            await stringFormatting.sendDelimited(ctx, INVALID_MESSAGE)
             return
 
-        rawImage = await requests.downloadCardImage(desiredCard)
+        rawImage = await Repository.getCardImage(desiredCard)
         if rawImage is None:
             await ctx.send("Please check input.")
             return
@@ -150,21 +152,21 @@ class Tarot(commands.Cog):
         cardName = message
         thisInvalidMessage = INVALID_MESSAGE + "Single Term: Knight / Ace / Devil etc."
         if cardName == '':
-            await formatting.sendDelimited(ctx, thisInvalidMessage)
+            await stringFormatting.sendDelimited(ctx, thisInvalidMessage)
             return
 
-        fullDeck = await requests.getFullDeck()
+        fullDeck = await Repository.getFullDeck()
         if fullDeck is None:
             return
 
         cardsFound = False
         for card in fullDeck["cards"]:
             if cardName in card["name"]:
-                await formatting.sendDelimited(ctx, card['desc'])
+                await stringFormatting.sendDelimited(ctx, card['desc'])
                 cardsFound = True
 
         if not cardsFound:
-            await formatting.sendDelimited(ctx, thisInvalidMessage)
+            await stringFormatting.sendDelimited(ctx, thisInvalidMessage)
 
     @commands.command()
     @predicates.inChannels(testID)
@@ -180,7 +182,7 @@ class Tarot(commands.Cog):
             numberOfCards = self.CARD_LIMIT
             await ctx.send("You'll have 7 cards and you'll like it.")
 
-        cards = await requests.getRandomCards(numberOfCards)
+        cards = await Repository.getRandomCards(numberOfCards)
 
         if numberOfCards < self.CARD_LIMIT:
             await ctx.send(f"Very well {str(ctx.author)}{SPACER}")
@@ -189,12 +191,12 @@ class Tarot(commands.Cog):
 
         # Determines card orientation and posts message in sequence.
         for card in cards["cards"]:
-            await formatting.sendDelimited(
+            await stringFormatting.sendDelimited(
                 ctx,
                 await self.getCardMessage(card, orientation=random.randint(0, 1)),
                 delimiters=("```", "***")
             )
-            image = await requests.downloadCardImage(card)
+            image = await Repository.getCardImage(card)
             images.append(await convertImage(image))
 
         finalSpread = await combineImageListHorizontal(images)

@@ -14,7 +14,7 @@ async def convertImage(image: bytes) -> Image:
 
 async def combineImagePairHorizontal(im1, im2) -> Image:
     """
-    Combines a pair of images horizontally into a single image.
+    Combines a pair of assets horizontally into a single image.
     Saves the combined image as .jpg
     :param im1: Pillow Image object
     :param im2: Pillow Image object

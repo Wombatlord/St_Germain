@@ -1,8 +1,10 @@
 /venv/
-/images/
 .idea
 */__pycache__/
 *.pyc
 .replit
 poetry.lock
 pyproject.toml
+
+/src/recipes/
+/docker/

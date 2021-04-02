@@ -4,3 +4,9 @@ services:
     volumes:
       - ./:/var/www/
     command: "/var/www/bin/run.sh"
+  db:
+    image: postgres
+    ports:
+      -42069:5432
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust

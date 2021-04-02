@@ -1,5 +1,4 @@
 import io
-import os
 from typing import List
 
 import random
@@ -7,8 +6,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from src.utils import stringFormatting, predicates
-from src.adaptors.tarotRepository import get, HTTP, FS
-from src.images.imageManipulators import combineImageListHorizontal, convertImage
+from src.adaptors.tarotRepository import get, HTTP
+from src.utils.imageManipulators import combineImageListHorizontal, convertImage
 
 Repository = get(HTTP)
 SPACER: str = '\n' + '__ ' * 22
@@ -79,7 +78,7 @@ class Tarot(commands.Cog):
         return True
 
     @commands.command()
-    @predicates.inChannels(testID)
+    @predicates.inChannels(testID, whiteLodgeChannel)
     async def meaning(self, ctx, *, message=''):
         """
         Responds to the user with the meanings of the provided car
@@ -108,7 +107,7 @@ class Tarot(commands.Cog):
             await stringFormatting.sendDelimited(ctx, f"Reversed: {meanings.get('rev', '')}")
 
     @commands.command()
-    @predicates.inChannels(testID)
+    @predicates.inChannels(testID, whiteLodgeChannel)
     async def image(self, ctx: Context, message: str):
         """
         Responds to the discord user with the image associated to a card
@@ -141,7 +140,7 @@ class Tarot(commands.Cog):
         await ctx.send(file=discord.File(cardImage, f"{cardName}.jpg"))
 
     @commands.command()
-    @predicates.inChannels(testID)
+    @predicates.inChannels(testID, whiteLodgeChannel)
     async def describe(self, ctx: Context, message: str) -> None:
         """
         Retrieves the description of a card by its name.
@@ -169,7 +168,7 @@ class Tarot(commands.Cog):
             await stringFormatting.sendDelimited(ctx, thisInvalidMessage)
 
     @commands.command()
-    @predicates.inChannels(testID)
+    @predicates.inChannels(testID, whiteLodgeChannel)
     async def tarot(self, ctx: Context, numberOfCards):
         """
         Retrieves random cards as JSON.

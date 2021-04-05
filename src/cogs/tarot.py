@@ -169,7 +169,7 @@ class Tarot(commands.Cog):
 
     @commands.command()
     @predicates.inChannels(testID, whiteLodgeChannel)
-    async def tarot(self, ctx: Context, numberOfCards):
+    async def tarot(self, ctx: Context, numberOfCards=3):
         """
         Retrieves random cards as JSON.
         If API response is OK, creates a variable to hold the username and prepares cards.

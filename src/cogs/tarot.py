@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from src.utils import stringFormatting, predicates
-from src.adaptors.tarotRepository import get, HTTP
+from src.adaptors.repositories.tarotRepository import get, HTTP
 from src.utils.imageManipulators import combineImageListHorizontal, convertImage
 
 Repository = get(HTTP)

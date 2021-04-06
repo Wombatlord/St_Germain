@@ -10,9 +10,9 @@ class FirstMigration(AbstractMigration):
         return "First migration"
 
     @classmethod
-    def _createRecipeTable(cls) -> None:
+    def _createRecipesTable(cls) -> None:
         sql = """
-            create table recipe
+            create table recipes
             (
                 id serial, 
                 author varchar(255) not null,
@@ -23,11 +23,11 @@ class FirstMigration(AbstractMigration):
                 serves varchar(255) not null            
             );
         
-            create unique index recipe_sequence_uindex
-                on recipe (id);
+            create unique index recipes_sequence_uindex
+                on recipes (id);
         
-            alter table recipe
-                add constraint recipe_pk
+            alter table recipes
+                add constraint recipes_pk
             primary key (sequence);    
         """
 
@@ -56,4 +56,4 @@ class FirstMigration(AbstractMigration):
     @classmethod
     def addSQL(cls) -> None:
         cls._initDB()
-        cls._createRecipeTable()
+        cls._createRecipesTable()

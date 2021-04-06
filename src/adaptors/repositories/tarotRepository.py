@@ -4,11 +4,16 @@ import random
 from typing import Optional, Dict, Type
 from src.adaptors.httpAdaptor import getResponseBody, downloadFile
 
+# Repository Mode Select
 HTTP: int = 0
 FS: int = 1
 
 
 def get(mode: int) -> Type[TarotRepository]:
+    """
+    Pass in a valid Mode Select to return the appropriate
+    Repository interface.
+    """
     return [
         HttpTarotRepository,
         FSTarotRepository
@@ -16,6 +21,11 @@ def get(mode: int) -> Type[TarotRepository]:
 
 
 class TarotRepository:
+    """
+    Generic interfaces for interacting with Tarot domain.
+    Specific use case does not inherit from generic Repository class.
+    """
+
     @classmethod
     async def getFullDeck(cls) -> Optional[dict]:
         pass
@@ -30,14 +40,24 @@ class TarotRepository:
 
 
 class HttpTarotRepository(TarotRepository):
+    """
+    Implementations of generic Tarot interfaces.
+    These implementations retrieve Tarot domain data over HTTP.
+    This is the primary method by which the Tarot Cog retrieves cards.
+    """
     config: dict = {
         "host": "rws-cards-api.herokuapp.com/api",
+        "imageHost": "sacred-texts.com/tarot/pkt/img/{}.jpg",
         "scheme": "https"
     }
 
     @classmethod
     def _getApiRoot(cls):
         return f"{cls.config.get('scheme')}://{cls.config.get('host')}"
+
+    @classmethod
+    def _getImageRoot(cls):
+        return f"{cls.config.get('scheme')}://{cls.config.get('imageHost')}"
 
     @classmethod
     async def getFullDeck(cls) -> Optional[dict]:
@@ -51,18 +71,35 @@ class HttpTarotRepository(TarotRepository):
 
     @classmethod
     async def getCardImage(cls, card: Dict[str, str]) -> Optional[bytes]:
-        url = "https://www.sacred-texts.com/tarot/pkt/img/{}.jpg".format(card["name_short"])
+        """
+        A coincidence of naming convention allows an image to be retrieved
+        from the imageHost simply by interpolating the 'name_short' property
+        from the API or local JSON.
+        A different image host is likely to require alternate implementation
+        for url construction.
+        """
+        url = cls._getImageRoot().format(card["name_short"])
         return await downloadFile(url)
 
 
 class FSTarotRepository(TarotRepository):
     """
     UNDER CONSTRUCTION
+    Implementations of generic Tarot interfaces.
+    These implementations interact with local filesystem to retrieve Tarot data.
+    This is predominantly a backup method in case of Tarot API failure.
+    Requires a local JSON copy of a Tarot deck (see Assets directory).
+    HTTP is still used here for Image retrieval only.
     """
     path: str = "assets/tarot.json"
 
     @classmethod
     def _decorateWithNhits(cls, cards):
+        """
+        Returns a paginated tarot deck.
+        :param cards: tarot JSON
+        :return: dict containing a pagination field and the tarot JSON.
+        """
         return {
             "nhits": len(cards),
             "cards": cards

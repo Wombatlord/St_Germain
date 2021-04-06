@@ -1,34 +1,37 @@
 from __future__ import annotations
 from typing import Tuple, List
-from discord.ext import commands
 from discord.ext.commands import Context
 import json
 
 
-class Recipe():
+class Recipe:
     def __init__(
-            self, bot, ctx: Context, title: str, ingredients: dict[str: str], cookTime: str,
+            self, author: str, title: str, ingredients: dict[str: str], cookTime: str,
             method: List[Tuple[int, str]], serves: int,
     ) -> None:
-        self.bot = bot
-        self._author = ctx.author
-        self._title = title
-        self._ingredients = ingredients
+        self._author = author
+        self.title = title
+        self.ingredients = ingredients
         self._cookTime = cookTime
         self._method = method
         self._serves = serves
+
+    async def setTitle(self, newTitle):
+        self.title = newTitle
+
+    async def setIngredient(self, newIngredient):
+        self.ingredients = (1, newIngredient)
 
     @property
     async def author(self) -> str:
         return self._author
 
-    @property
+    # @property
     async def title(self) -> str:
-        return self._title
+        return self.title
 
-    @property
     async def ingredients(self) -> str:
-        return self._ingredients
+        return self.ingredients
 
     @property
     async def cookTime(self) -> str:
@@ -45,8 +48,8 @@ class Recipe():
     async def serialize(self) -> str:
         recipeDict = {
             "author": self._author,
-            "title": self._title,
-            "ingredients": self._ingredients,
+            "title": self.title,
+            "ingredients": self.ingredients,
             "cookTime": self._cookTime,
             "method": self._method,
             "serves": self._serves,
@@ -58,10 +61,6 @@ class Recipe():
     async def deserialize(cls, jsonRecipe: str) -> Recipe:
         recipeDict = json.loads(jsonRecipe)
         return cls(**recipeDict)
-
-    @commands.Cog.listener()
-    async def on_member_join(self):
-        pass
 
 
 async def respondForRecipe(ctx, message):

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Tuple, List
-from discord.ext.commands import Context
 import json
 
 
@@ -9,12 +8,12 @@ class Recipe:
             self, author: str, title: str, ingredients: dict[str: str], cookTime: str,
             method: List[Tuple[int, str]], serves: int,
     ) -> None:
-        self._author = author
+        self.author = author
         self.title = title
         self.ingredients = ingredients
-        self._cookTime = cookTime
-        self._method = method
-        self._serves = serves
+        self.cookTime = cookTime
+        self.method = method
+        self.serves = serves
 
     async def setTitle(self, newTitle):
         self.title = newTitle
@@ -22,37 +21,32 @@ class Recipe:
     async def setIngredient(self, newIngredient):
         self.ingredients = (1, newIngredient)
 
-    @property
-    async def author(self) -> str:
-        return self._author
+    async def getAuthor(self) -> str:
+        return self.author
 
-    # @property
-    async def title(self) -> str:
+    async def getTitle(self) -> str:
         return self.title
 
-    async def ingredients(self) -> str:
+    async def getIngredients(self) -> str:
         return self.ingredients
 
-    @property
-    async def cookTime(self) -> str:
-        return self._cookTime
+    async def getCookTime(self) -> str:
+        return self.cookTime
 
-    @property
-    async def method(self) -> List[Tuple[int, str]]:
-        return self._method
+    async def getMethod(self) -> List[Tuple[int, str]]:
+        return self.method
 
-    @property
-    async def serves(self) -> int:
-        return self._serves
+    async def getServes(self) -> int:
+        return self.serves
 
     async def serialize(self) -> str:
         recipeDict = {
-            "author": self._author,
+            "author": self.author,
             "title": self.title,
             "ingredients": self.ingredients,
-            "cookTime": self._cookTime,
-            "method": self._method,
-            "serves": self._serves,
+            "cookTime": self.cookTime,
+            "method": self.method,
+            "serves": self.serves,
         }
 
         return json.dumps(recipeDict)
@@ -61,12 +55,6 @@ class Recipe:
     async def deserialize(cls, jsonRecipe: str) -> Recipe:
         recipeDict = json.loads(jsonRecipe)
         return cls(**recipeDict)
-
-
-async def respondForRecipe(ctx, message):
-    newRecipe = Recipe
-    response = "Please press 1 or 2"
-    await ctx.author.send(response)
 
 
 # author = "Bezos"

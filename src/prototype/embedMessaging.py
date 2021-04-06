@@ -50,8 +50,8 @@ class PrototypeCog(commands.Cog):
         self.optionList: List[int] = [1, 2, 3]
 
     @commands.command()
-    async def newRecipe(self, ctx):
-        authorID = ctx.author.id
+    async def newRecipe(self, ctx: Context) -> None:
+        authorID: int = ctx.author.id
         newRecipe: Recipe = Recipe(author=ctx.author,
                                    title="",
                                    ingredients="",
@@ -61,10 +61,12 @@ class PrototypeCog(commands.Cog):
 
         await ctx.author.send(embed=embedded)
 
-        def check(message):
-            return isinstance(message.channel, discord.channel.DMChannel)
+        def check(message) -> bool:
+            print(authorID)
+            print(message.author.id)
+            return isinstance(message.channel, discord.channel.DMChannel) and message.author.id == authorID
 
-        msg = await self.bot.wait_for("message", check=check)
+        msg = await self.bot.wait_for("message", check=lambda message: isinstance(message.channel, discord.channel.DMChannel) and message.author.id == authorID)
 
         if msg.content == "1":
             await ctx.author.send(embed=firstOptionEmbedded)
@@ -81,7 +83,7 @@ class PrototypeCog(commands.Cog):
             await ctx.author.send(f"Ingredient is {newRecipe.ingredients}!")
 
     @commands.command()
-    async def embedTest(self, ctx, message):
+    async def embedTest(self, ctx, message) -> None:
         if ctx.author.bot:
             return
         if isinstance(ctx.channel, discord.channel.DMChannel):

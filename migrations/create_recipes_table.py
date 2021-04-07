@@ -34,26 +34,5 @@ class FirstMigration(AbstractMigration):
         cls.migrations.append(sql)
 
     @classmethod
-    def _initDB(cls):
-        sql = """
-            DROP SCHEMA public CASCADE;
-            CREATE SCHEMA public; 
-            create table migrations
-            (
-                id varchar(255)           
-            );
-        
-            create unique index migrations_sequence_uindex
-                on migrations (id);
-        
-            alter table migrations
-                add constraint migrations_id
-            primary key (id);    
-        """
-
-        cls.migrations.append(sql)
-
-    @classmethod
     def addSQL(cls) -> None:
-        cls._initDB()
         cls._createRecipesTable()

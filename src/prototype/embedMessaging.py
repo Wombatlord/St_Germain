@@ -1,7 +1,8 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Dict, Callable
 
 import discord
+from discord import Message
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -9,6 +10,7 @@ from discord.ext.commands import Context
 from src.models.recipe import Recipe
 
 kindaGold = 16565763
+
 testEmbed = {
     "title": "St. Germain's Kitchen",
     "description": "Choose an option to construct a recipe entry.",
@@ -66,32 +68,36 @@ class PrototypeCog(commands.Cog):
             print(message.author.id)
             return isinstance(message.channel, discord.channel.DMChannel) and message.author.id == authorID
 
-        msg = await self.bot.wait_for("message", check=lambda message: isinstance(message.channel, discord.channel.DMChannel) and message.author.id == authorID)
+        msg: Message = await self.bot.wait_for("message", check=lambda message: isinstance(message.channel,
+                                                                                           discord.channel.DMChannel) and message.author.id == authorID)
 
-        if msg.content == "1":
-            await ctx.author.send(embed=firstOptionEmbedded)
-            msg = await self.bot.wait_for("message", check=check)
+        args = (self.bot, ctx, newRecipe, check)
+        optionDict = {
+            "1": lambda: supplyTitle(*args),
+            "2": lambda: supplyIngredients(*args)
+        }
 
-            await newRecipe.setTitle(msg.content)
-            await ctx.author.send(f"Recipe title is {newRecipe.title}!")
+        responder = optionDict.get(msg.content, lambda: ctx.author.message("Please choose either option 1 or option 2"))
+        await responder()
 
-        if msg.content == "2":
-            await ctx.author.send(embed=secondOptionEmbed)
-            msg = await self.bot.wait_for("message", check=check)
 
-            await newRecipe.setIngredient(msg.content)
-            await ctx.author.send(f"Ingredient is {newRecipe.ingredients}!")
+async def supplyTitle(bot, ctx, newRecipe, check):
+    await ctx.author.send(embed=firstOptionEmbedded)
+    msg: Message = await bot.wait_for("message", check=check)
 
-    @commands.command()
-    async def embedTest(self, ctx, message) -> None:
-        if ctx.author.bot:
-            return
-        if isinstance(ctx.channel, discord.channel.DMChannel):
-            if message in optionsList:
-                await ctx.author.send(embed=embedded)
-            else:
-                await ctx.author.send("Option not found.")
+    newRecipe.setTitle(msg.content)
+    await ctx.author.send(f"Recipe title is {newRecipe.title}!")
+
+
+async def supplyIngredients(bot, ctx, newRecipe, check):
+    await ctx.author.send(embed=secondOptionEmbed)
+    msg: Message = await bot.wait_for("message", check=check)
+
+    await newRecipe.setIngredient(msg.content)
+    await ctx.author.send(f"Ingredient is {newRecipe.ingredients}!")
 
 
 def setup(bot):
-    bot.add_cog(PrototypeCog(bot))
+    cog = PrototypeCog(bot)
+
+    bot.add_cog(cog)

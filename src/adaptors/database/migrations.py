@@ -1,7 +1,11 @@
-from typing import List, Type, Tuple
+from __future__ import annotations
+
+import sys
+from typing import List, Type, Tuple, Dict, Callable
 
 from src.adaptors.database.db_adaptor import get_cursor, commit
-from migrations.init_db import FirstMigration
+from migrations.create_recipes_table import FirstMigration
+
 
 # Noob Note:
 #
@@ -12,8 +16,10 @@ from migrations.init_db import FirstMigration
 # eg. Adding / removing tables, adding / removing columns to / from tables.
 
 
-class MigrationHistory:
-    migrations: List[str] = []
+class RegisteredMigrations:
+    migrations: List[Type[AbstractMigration]] = [
+        FirstMigration,
+    ]
 
 
 class AbstractMigration:
@@ -63,17 +69,60 @@ class MigrationRunner:
             cls.migrations.append((migration.getMigrationID(), migration))
 
     @classmethod
-    def runMigrations(cls) -> None:
+    def runMigrations(cls, migration: Type[AbstractMigration]) -> None:
         """
         Checks the migration list for registered migrations
         and runs them in sequence.
         """
-        for migrationID, migration in cls.migrations:
-            migrationExists = get_cursor().execute(f"SELECT id FROM migrations WHERE id = '{migrationID}'").fetchOne()
-            if not migrationExists:
-                migration.run()
+        sql = f"SELECT id FROM migrations WHERE id = '{migration.getMigrationID()}'"
+        migrationExists = get_cursor().execute(sql).fetchOne()
+        if not migrationExists:
+            migration.run()
+
+
+    @classmethod
+    def init_db(cls) -> None:
+
+        sql = """
+            DROP SCHEMA public CASCADE;
+            CREATE SCHEMA public; 
+            create table migrations
+            (
+                id varchar(255)           
+            );
+
+            create unique index migrations_sequence_uindex
+                on migrations (id);
+
+            alter table migrations
+                add constraint migrations_id
+            primary key (id);    
+        """
+
+        get_cursor().execute(sql)
 
 
 def run():
-    MigrationRunner.registerMigration(FirstMigration)
+    for migration in RegisteredMigrations.migrations:
+        MigrationRunner.registerMigration(migration)
     MigrationRunner.runMigrations()
+
+
+def flush():
+    MigrationRunner.init_db()
+    run()
+
+
+options: Dict[str: Callable[[str], None]] = {
+    "run": run,
+    "flush": flush
+}
+
+
+if __name__ == "__main__":
+    def error(arg):
+        optionsString = ', '.join(list(options.keys()))
+        print(f"The command '{arg}' does not exist, available commands are {optionsString}")
+    args = sys.argv
+    command = options.get(args[1], error)
+    command()

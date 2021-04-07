@@ -15,7 +15,7 @@ class Recipe:
         self.method = method
         self.serves = serves
 
-    async def setTitle(self, newTitle):
+    def setTitle(self, newTitle):
         self.title = newTitle
 
     async def setIngredient(self, newIngredient):

@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import Optional, List, Union, Tuple
 
 from src.adaptors.repositories.repository import Repository
-from src.models.recipe import Recipe
+
 from src.adaptors.database import db_adaptor as db
+from src.models.recipe.recipe import Recipe
 
 
 class RecipeRepository(Repository):

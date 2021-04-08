@@ -72,15 +72,6 @@ class Bot(BotBase):
 
 bot = Bot()
 
-
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
-    await bot.process_commands(message)
-
-
-cogs = ["src.cogs.helper", "src.cogs.tarot", "src.cogs.toys", "src.prototype.embedMessaging"]
+cogs = ["src.cogs.helper", "src.cogs.tarot", "src.cogs.toys", "src.cogs.recipeBuilder"]
 for cog in cogs:
     bot.load_extension(cog)

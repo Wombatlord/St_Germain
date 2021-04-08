@@ -18,8 +18,17 @@ class Recipe:
     def setTitle(self, newTitle):
         self.title = newTitle
 
-    async def setIngredient(self, newIngredient):
+    def setIngredient(self, newIngredient):
         self.ingredients = (1, newIngredient)
+
+    def setCookTime(self, cookTime):
+        self.cookTime = cookTime
+
+    def setMethod(self, method):
+        self.method = method
+
+    def setServes(self, serves):
+        self.serves = serves
 
     async def getAuthor(self) -> str:
         return self.author

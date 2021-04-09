@@ -7,6 +7,6 @@ services:
   db:
     image: postgres
     ports:
-      -42069:5432
+      - 6666:5432
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust

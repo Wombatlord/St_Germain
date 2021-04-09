@@ -72,6 +72,6 @@ class Bot(BotBase):
 
 bot = Bot()
 
-cogs = ["src.cogs.helper", "src.cogs.tarot", "src.cogs.toys"]
+cogs = ["src.cogs.helper", "src.cogs.tarot", "src.cogs.toys", "src.cogs.recipeBuilder"]
 for cog in cogs:
     bot.load_extension(cog)

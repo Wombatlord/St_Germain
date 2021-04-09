@@ -10,6 +10,14 @@ def inChannels(*args):
     return commands.check(predicate)
 
 
+# Maybe DM predicate? Might be useless. See prototype cog.
+async def inDMChannel(*args):
+    def predicate(ctx):
+        return args == isinstance(ctx.channel, discord.channel.DMChannel)
+
+    return commands.check(predicate)
+
+
 # This is responding with DM, not DM predicate.
 # Just testing for later.
 async def checkDM(ctx):

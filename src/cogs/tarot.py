@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from src.utils import stringFormatting, predicates
-from src.adaptors.tarotRepository import get, HTTP
+from src.adaptors.repositories.tarotRepository import get, HTTP
 from src.utils.imageManipulators import combineImageListHorizontal, convertImage
 
 Repository = get(HTTP)
@@ -169,7 +169,7 @@ class Tarot(commands.Cog):
 
     @commands.command()
     @predicates.inChannels(testID, whiteLodgeChannel)
-    async def tarot(self, ctx: Context, numberOfCards):
+    async def tarot(self, ctx: Context, numberOfCards=3):
         """
         Retrieves random cards as JSON.
         If API response is OK, creates a variable to hold the username and prepares cards.

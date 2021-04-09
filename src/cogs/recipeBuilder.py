@@ -57,7 +57,7 @@ class RecipeBuilderCog(commands.Cog):
         menus.configure(fullConfig)
 
         await menus.rootNode(self.bot, ctx)
-        Repository.save(self._recipe)
+        # Repository.save(self._recipe)
 
         self.clean()
 
@@ -83,7 +83,6 @@ class RecipeBuilderCog(commands.Cog):
     async def servesInputHandler(self, bot_, context, message):
         self._recipe.setServes(message.content)
         await context.author.send(f"This recipe serves {self._recipe.serves}!")
-
 
 
 def setup(bot):

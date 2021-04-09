@@ -9,16 +9,6 @@ from src.models.recipe.recipe import Recipe
 
 
 class RecipeRepository(Repository):
-    tableName: str = "recipes"
-    columns: Tuple = (
-        "author",
-        "title",
-        "ingredients",
-        "cook_time",
-        "method",
-        "serves"
-    )
-
     @classmethod
     def getByAuthor(cls, author: str) -> List[Recipe]:
         pass
@@ -29,6 +19,17 @@ class RecipeRepository(Repository):
 
 
 class PostgresRecipeRepository(RecipeRepository):
+    tableName: str = "recipes"
+
+    columns: Tuple = (
+        "author",
+        "title",
+        "ingredients",
+        "cook_time",
+        "method",
+        "serves"
+    )
+
     @classmethod
     def save(cls, recipe: Recipe) -> None:
         columnsString = ", ".join(list(cls.columns))

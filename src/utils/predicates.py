@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 # Decorator for limiting commands per channel.
-def inChannels(*args) -> bool:
+def inChannels(*args):
     def predicate(ctx):
         return ctx.message.channel.id in args
 
@@ -11,7 +11,7 @@ def inChannels(*args) -> bool:
 
 
 # Maybe DM predicate? Might be useless. See prototype cog.
-async def inDMChannel(*args) -> bool:
+async def inDMChannel(*args):
     def predicate(ctx):
         return args == isinstance(ctx.channel, discord.channel.DMChannel)
 

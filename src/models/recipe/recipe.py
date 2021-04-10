@@ -30,25 +30,31 @@ class Recipe:
     def setServes(self, serves):
         self.serves = serves
 
-    async def getAuthor(self) -> str:
+    def getAuthor(self) -> str:
         return self.author
 
-    async def getTitle(self) -> str:
+    def getTitle(self) -> str:
         return self.title
 
-    async def getIngredients(self) -> str:
+    def getIngredients(self) -> str:
         return self.ingredients
 
-    async def getCookTime(self) -> str:
+    def getCookTime(self) -> str:
         return self.cookTime
 
-    async def getMethod(self) -> List[Tuple[int, str]]:
+    def getMethod(self) -> List[Tuple[int, str]]:
         return self.method
 
-    async def getServes(self) -> int:
+    def getServes(self) -> int:
         return self.serves
 
-    async def serialize(self) -> str:
+    def getMethodJson(self) -> str:
+        return json.dumps(self.getMethod())
+
+    def getIngredientsText(self) -> str:
+        return json.dumps(self.getIngredients())
+
+    def serialize(self) -> str:
         recipeDict = {
             "author": self.author,
             "title": self.title,
@@ -61,7 +67,7 @@ class Recipe:
         return json.dumps(recipeDict)
 
     @classmethod
-    async def deserialize(cls, jsonRecipe: str) -> Recipe:
+    def deserialize(cls, jsonRecipe: str) -> Recipe:
         recipeDict = json.loads(jsonRecipe)
         return cls(**recipeDict)
 

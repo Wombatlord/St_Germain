@@ -36,19 +36,16 @@ class PostgresRecipeRepository(RecipeRepository):
         values = [
             recipe.author,
             recipe.title,
-            recipe.ingredients,
+            recipe.getIngredientsText(),
             recipe.cookTime,
-            recipe.method,
+            recipe.getMethodJson(),
             recipe.serves
         ]
-        values = map(
-            lambda v: f"'{v}'",
-            values
-        )
-        valuesString = ", ".join(values)
-        sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({valuesString})"
+        placeholders = ", ".join(["%s"]*6)
+        sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
+        print(sql)
         cursor = db.get_cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, values)
         db.commit()
 
     @classmethod

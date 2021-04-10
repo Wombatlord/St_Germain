@@ -28,7 +28,7 @@ class RecipeBuilderCog(commands.Cog):
     @commands.command()
     async def newRecipe(self, ctx: Context) -> None:
         authorID: int = ctx.author.id
-        self._recipe: Recipe = Recipe(author=ctx.author,
+        self._recipe: Recipe = Recipe(author=ctx.author.name,
                                       title="",
                                       ingredients="",
                                       cookTime="",
@@ -57,7 +57,7 @@ class RecipeBuilderCog(commands.Cog):
         menus.configure(fullConfig)
 
         await menus.rootNode(self.bot, ctx)
-        # Repository.save(self._recipe)
+        Repository.save(self._recipe)
 
         self.clean()
 

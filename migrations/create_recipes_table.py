@@ -1,4 +1,5 @@
 from typing import List
+
 from src.adaptors.database.migrations import AbstractMigration
 
 
@@ -7,7 +8,7 @@ class FirstMigration(AbstractMigration):
 
     @classmethod
     def getMigrationID(cls) -> str:
-        return "First migration"
+        return "create_recipes_table"
 
     @classmethod
     def _createRecipesTable(cls) -> None:
@@ -17,18 +18,14 @@ class FirstMigration(AbstractMigration):
                 id serial, 
                 author varchar(255) not null,
                 title varchar(255) not null,
-                ingredients json,
+                ingredients text not null,
                 cook_time varchar(255) not null,
                 method text not null,
                 serves varchar(255) not null            
             );
-        
+
             create unique index recipes_sequence_uindex
-                on recipes (id);
-        
-            alter table recipes
-                add constraint recipes_pk
-            primary key (sequence);    
+                on recipes (id);    
         """
 
         cls.migrations.append(sql)
@@ -36,3 +33,5 @@ class FirstMigration(AbstractMigration):
     @classmethod
     def addSQL(cls) -> None:
         cls._createRecipesTable()
+
+

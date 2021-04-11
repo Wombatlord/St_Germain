@@ -61,6 +61,19 @@ class RecipeBuilderCog(commands.Cog):
 
         self.clean()
 
+    @commands.command()
+    async def recipeID(self, ctx, recipeID):
+        requestedRecipe = Repository.getByID(recipeID)
+        print(requestedRecipe)
+        recipeDict = {
+            "author": requestedRecipe.author,
+            "title": requestedRecipe.title,
+            "ingredients": requestedRecipe.ingredients,
+            "recipeMethod": requestedRecipe.method,
+            "serves": requestedRecipe.serves,
+        }
+        await ctx.author.send(recipeDict)
+
     def clean(self):
         self._recipe = None
 

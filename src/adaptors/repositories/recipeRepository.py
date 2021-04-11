@@ -41,7 +41,7 @@ class PostgresRecipeRepository(RecipeRepository):
             recipe.getMethodJson(),
             recipe.serves
         ]
-        placeholders = ", ".join(["%s"]*6)
+        placeholders = ", ".join(["%s"] * 6)
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
         print(sql)
         cursor = db.get_cursor()
@@ -49,16 +49,52 @@ class PostgresRecipeRepository(RecipeRepository):
         db.commit()
 
     @classmethod
-    def getByID(cls, id: Union[str, int]) -> Optional[Recipe]:
-        # TODO: Implement
-        raise NotImplemented
+    def getByID(cls, recipeID: Union[str, int]) -> Recipe:
+        sql = f"SELECT * FROM recipes WHERE id = '{recipeID}'"
+        cursor = db.get_cursor()
+        cursor.execute(sql)
+        row = cursor.fetchone()
+        rowDict: dict = {
+            "author": row[1],
+            "title": row[2],
+            "ingredients": row[3],
+            "cookTime": row[4],
+            "method": row[5],
+            "serves": row[6],
+        }
+        recipe: Recipe = Recipe(**rowDict)
+        return recipe
 
     @classmethod
-    def getByAuthor(cls, author: str) -> List[Recipe]:
-        # TODO: Implement
-        raise NotImplemented
+    def getByAuthor(cls, author: str) -> Recipe:
+        sql = f"SELECT * FROM recipes WHERE id = '{author}'"
+        cursor = db.get_cursor()
+        cursor.execute(sql)
+        row = cursor.fetchone()
+        rowDict: dict = {
+            "author": row[0],
+            "title": row[1],
+            "ingredients": row[2],
+            "cookTime": row[3],
+            "method": row[4],
+            "serves": row[5],
+        }
+        recipe: Recipe = Recipe(**rowDict)
+        return recipe
 
     @classmethod
     def getByTitle(cls, title: str) -> Recipe:
-        # TODO: Implement
-        raise NotImplemented
+        sql = f"SELECT * FROM recipes WHERE id = '{title}'"
+        cursor = db.get_cursor()
+        cursor.execute(sql)
+        row = cursor.fetchone()
+        rowDict: dict = {
+            "author": row[0],
+            "title": row[1],
+            "ingredients": row[2],
+            "cookTime": row[3],
+            "method": row[4],
+            "serves": row[5],
+        }
+        recipe: Recipe = Recipe(**rowDict)
+        return recipe

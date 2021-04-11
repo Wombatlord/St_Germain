@@ -20,6 +20,7 @@ class RecipeRepository(Repository):
 
 class PostgresRecipeRepository(RecipeRepository):
     tableName: str = "recipes"
+    methodTable: str = "method"
 
     columns: Tuple = (
         "author",
@@ -32,7 +33,9 @@ class PostgresRecipeRepository(RecipeRepository):
 
     @classmethod
     def save(cls, recipe: Recipe) -> None:
+        methodString = "method"
         columnsString = ", ".join(list(cls.columns))
+
         values = [
             recipe.author,
             recipe.title,
@@ -41,16 +44,38 @@ class PostgresRecipeRepository(RecipeRepository):
             recipe.getMethodJson(),
             recipe.serves
         ]
+        method = [recipe.getMethodJson()]
+
         placeholders = ", ".join(["%s"] * 6)
+        placeholder = "%s"
+
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
+        methodSql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
+
         print(sql)
+        print(values)
+
         cursor = db.get_cursor()
         cursor.execute(sql, values)
+        cursor.execute(methodSql, method)
+        db.commit()
+
+    @classmethod
+    def saveMethod(cls, recipe: Recipe) -> None:
+        methodString = "method"
+        value = [recipe.getMethodJson()]
+
+        placeholder = "%s"
+        sql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
+        print(sql)
+        print(value)
+        cursor = db.get_cursor()
+        cursor.execute(sql, value)
         db.commit()
 
     @classmethod
     def getByID(cls, recipeID: Union[str, int]) -> Recipe:
-        sql = f"SELECT * FROM recipes WHERE id = '{recipeID}'"
+        sql = f"SELECT * FROM recipes WHERE recipe_id = '{recipeID}'"
         cursor = db.get_cursor()
         cursor.execute(sql)
         row = cursor.fetchone()

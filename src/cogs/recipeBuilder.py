@@ -58,6 +58,7 @@ class RecipeBuilderCog(commands.Cog):
 
         await menus.rootNode(self.bot, ctx)
         Repository.save(self._recipe)
+        # Repository.saveMethod(self._recipe)
 
         self.clean()
 

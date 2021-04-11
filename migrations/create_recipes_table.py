@@ -15,23 +15,61 @@ class FirstMigration(AbstractMigration):
         sql = """
             create table recipes
             (
-                id serial, 
+                recipe_id serial, 
                 author varchar(255) not null,
                 title varchar(255) not null,
                 ingredients text not null,
                 cook_time varchar(255) not null,
                 method text not null,
-                serves varchar(255) not null            
-            );
-
-            create unique index recipes_sequence_uindex
-                on recipes (id);    
+                serves varchar(255) not null,
+                primary key(recipe_id)
+            ); 
         """
+
+        cls.migrations.append(sql)
+
+    @classmethod
+    def _createIngredientsTable(cls) -> None:
+        sql = """
+            create table ingredients
+            (   
+                ingredients_id serial,
+                recipe_id INT,
+                ingredients text not null,
+                constraint fk_recipe
+                    foreign key(recipe_id)
+                        references recipes (recipe_id)
+                
+            );
+            
+            create unique index ingredients_sequence_uindex
+                on ingredients (ingredients_id);
+        """
+
+        cls.migrations.append(sql)
+
+    @classmethod
+    def _createMethodTable(cls) -> None:
+        sql = """
+                create table method
+                (   
+                    method_id serial,
+                    recipe_id INT,
+                    method text not null,
+                    constraint fk_recipe
+                        foreign key(recipe_id)
+                            references recipes (recipe_id)
+                    
+                );
+
+                create unique index method_sequence_uindex
+                    on method (method_id);
+            """
 
         cls.migrations.append(sql)
 
     @classmethod
     def addSQL(cls) -> None:
         cls._createRecipesTable()
-
-
+        cls._createIngredientsTable()
+        cls._createMethodTable()

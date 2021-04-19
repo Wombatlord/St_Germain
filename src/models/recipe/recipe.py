@@ -3,23 +3,38 @@ from typing import Tuple, List
 import json
 
 
+class Ingredient:
+    def __init__(self, quantity: str, ingredient: str) -> None:
+        self.quantity = quantity
+        self.ingredient = ingredient
+
+    def setQuantity(self, quantity):
+        self.quantity = quantity
+
+    def setIngredient(self, ingredient):
+        self.ingredient = ingredient
+
+
 class Recipe:
     def __init__(
-            self, author: str, title: str, ingredients: dict[str: str], cookTime: str,
+            self, author: str, title: str, ingredients: List[Ingredient], cookTime: str,
             method: List[Tuple[int, str]], serves: int,
     ) -> None:
-        self.author = author
-        self.title = title
-        self.ingredients = ingredients
-        self.cookTime = cookTime
-        self.method = method
-        self.serves = serves
+        self.author: str = author
+        self.title: str = title
+        self.ingredients: List[Ingredient] = ingredients
+        self.cookTime: str = cookTime
+        self.method: List[Tuple] = method
+        self.serves: int = serves
+
+    def addIngredient(self, ingredient: Ingredient) -> None:
+        self.ingredients.append(ingredient)
 
     def setTitle(self, newTitle):
         self.title = newTitle
 
     def setIngredient(self, newIngredient):
-        self.ingredients = (1, newIngredient)
+        self.ingredients = newIngredient
 
     def setCookTime(self, cookTime):
         self.cookTime = cookTime
@@ -36,7 +51,7 @@ class Recipe:
     def getTitle(self) -> str:
         return self.title
 
-    def getIngredients(self) -> str:
+    def getIngredients(self) -> List[Ingredient]:
         return self.ingredients
 
     def getCookTime(self) -> str:

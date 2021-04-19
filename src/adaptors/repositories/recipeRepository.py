@@ -21,6 +21,7 @@ class RecipeRepository(Repository):
 class PostgresRecipeRepository(RecipeRepository):
     tableName: str = "recipes"
     methodTable: str = "method"
+    ingredientsTable: str = "ingredients"
 
     columns: Tuple = (
         "author",
@@ -34,6 +35,7 @@ class PostgresRecipeRepository(RecipeRepository):
     @classmethod
     def save(cls, recipe: Recipe) -> None:
         methodString = "method"
+        ingredientsString = "ingredients"
         columnsString = ", ".join(list(cls.columns))
 
         values = [
@@ -45,12 +47,14 @@ class PostgresRecipeRepository(RecipeRepository):
             recipe.serves
         ]
         method = [recipe.getMethodJson()]
+        ingredients = [recipe.getIngredientsText()]
 
         placeholders = ", ".join(["%s"] * 6)
         placeholder = "%s"
 
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
         methodSql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
+        ingredientsSql = f"INSERT INTO {cls.ingredientsTable} ({ingredientsString}) VALUES ({placeholder})"
 
         print(sql)
         print(values)
@@ -58,10 +62,11 @@ class PostgresRecipeRepository(RecipeRepository):
         cursor = db.get_cursor()
         cursor.execute(sql, values)
         cursor.execute(methodSql, method)
+        cursor.execute(ingredientsSql, ingredients)
         db.commit()
 
     @classmethod
-    def saveMethod(cls, recipe: Recipe) -> None:
+    def _saveMethod(cls, recipe: Recipe) -> None:
         methodString = "method"
         value = [recipe.getMethodJson()]
 
@@ -69,6 +74,17 @@ class PostgresRecipeRepository(RecipeRepository):
         sql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
         print(sql)
         print(value)
+        cursor = db.get_cursor()
+        cursor.execute(sql, value)
+        db.commit()
+
+    @classmethod
+    def _saveIngredients(cls, recipe: Recipe) -> None:
+        ingredientsString = "ingredients"
+        value = [recipe.getIngredientsText()]
+
+        placeholder = "%s"
+        sql = f"INSERT INTO {cls.ingredientsTable} ({ingredientsString}) VALUES ({placeholder})"
         cursor = db.get_cursor()
         cursor.execute(sql, value)
         db.commit()

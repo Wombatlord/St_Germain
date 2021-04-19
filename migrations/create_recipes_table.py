@@ -36,10 +36,9 @@ class FirstMigration(AbstractMigration):
                 ingredients_id serial,
                 recipe_id INT,
                 ingredients text not null,
-                constraint fk_recipe
-                    foreign key(recipe_id)
-                        references recipes (recipe_id)
-                
+                quantity varchar(255) not null,
+                foreign key(recipe_id)
+                    references recipes (recipe_id)
             );
             
             create unique index ingredients_sequence_uindex
@@ -56,9 +55,8 @@ class FirstMigration(AbstractMigration):
                     method_id serial,
                     recipe_id INT,
                     method text not null,
-                    constraint fk_recipe
-                        foreign key(recipe_id)
-                            references recipes (recipe_id)
+                    foreign key(recipe_id)
+                        references recipes (recipe_id)
                     
                 );
 

@@ -92,8 +92,8 @@ class RecipeBuilderCog(commands.Cog):
 
     async def addIngredientsInputHandler(self, bot_, context, message):
         def check(message) -> bool:
-            authorID = message.author.id
-            print(context.authorID)
+            authorID = context.author.id
+            print(authorID)
             print(message.author.id)
             return isinstance(message.channel, discord.channel.DMChannel) and message.author.id == authorID
 

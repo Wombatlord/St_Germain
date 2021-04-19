@@ -47,6 +47,25 @@ async def exitMenu(bot, ctx):
     await ctx.author.send("Exiting Recipe Creation.")
 
 
+async def loopMenu(bot, ctx, check):
+    await ctx.author.send("how many?")
+    msg: Message = await bot.wait_for("message", check=check)
+    amount = int(msg.content)
+
+    for each in range(amount):
+        """
+        Having trouble here. I think the appends should be the recipe.addIngredients function but
+        no access to that, and I don't think domain code should be brought in here.
+        """
+        await ctx.author.send(f"{str(each + 1)}: Please enter an ingredient.")
+        msg: Message = await bot.wait_for("message", check=check)
+
+        await ctx.author.send(f"{str(each + 1)}: Please enter a total quantity.")
+        msg: Message = await bot.wait_for("message", check=check)
+
+    await rootNode(bot, ctx)
+
+
 async def rootNode(bot, ctx):
     await menuNode(bot, ctx)
 
@@ -61,6 +80,10 @@ async def menuNode(bot, ctx):
         isObject = isinstance(value, NodeConfig)
         if value == "exit":
             optionDict[key] = exitMenu
+
+        elif value == "testing":
+            await loopMenu(bot, ctx)
+
         elif isObject or isDict:
             value = value.toDict() if isObject else value
             optionDict[key] = inputNodeFactory(**value)

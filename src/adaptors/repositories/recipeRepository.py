@@ -5,7 +5,7 @@ from typing import Optional, List, Union, Tuple
 from src.adaptors.repositories.repository import Repository
 
 from src.adaptors.database import db_adaptor as db
-from src.models.recipe.recipe import Recipe
+from src.models.recipe.recipe import Recipe, Ingredient
 
 
 class RecipeRepository(Repository):
@@ -26,7 +26,6 @@ class PostgresRecipeRepository(RecipeRepository):
     columns: Tuple = (
         "author",
         "title",
-        "ingredients",
         "cook_time",
         "method",
         "serves"
@@ -34,6 +33,12 @@ class PostgresRecipeRepository(RecipeRepository):
 
     @classmethod
     def save(cls, recipe: Recipe) -> None:
+        cursor = db.get_cursor()
+
+        def saveIngredient(ingredient_: Ingredient):
+            ingredientSql = "INSERT INTO ingredients (ingredient, quantity, recipe_id) VALUES (%s, %s, %s)"
+            cursor.execute(ingredientSql, [ingredient_.ingredient, ingredient_.quantity, recipe.id])
+
         methodString = "method"
         ingredientsString = "ingredients"
         columnsString = ", ".join(list(cls.columns))
@@ -41,15 +46,14 @@ class PostgresRecipeRepository(RecipeRepository):
         values = [
             recipe.author,
             recipe.title,
-            recipe.getIngredientsText(),
             recipe.cookTime,
             recipe.getMethodJson(),
             recipe.serves
         ]
         method = [recipe.getMethodJson()]
-        ingredients = [recipe.getIngredientsText()]
+        # ingredients = [recipe.getIngredientsText()]
 
-        placeholders = ", ".join(["%s"] * 6)
+        placeholders = ", ".join(["%s"] * 5)
         placeholder = "%s"
 
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
@@ -59,10 +63,15 @@ class PostgresRecipeRepository(RecipeRepository):
         print(sql)
         print(values)
 
-        cursor = db.get_cursor()
         cursor.execute(sql, values)
         cursor.execute(methodSql, method)
-        cursor.execute(ingredientsSql, ingredients)
+
+        sqlRecipes = "INSERT INTO recipes (title) VALUES (%s)"
+        cursor.execute(sqlRecipes, [recipe.title])
+        for ingredient in recipe.ingredients:
+            print(ingredient)
+            saveIngredient(ingredient)
+        # cursor.execute(ingredientsSql, ingredients)
         db.commit()
 
     @classmethod

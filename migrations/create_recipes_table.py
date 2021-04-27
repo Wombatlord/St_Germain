@@ -16,12 +16,11 @@ class FirstMigration(AbstractMigration):
             create table recipes
             (
                 recipe_id serial, 
-                author varchar(255) not null,
-                title varchar(255) not null,
-                ingredients text not null,
-                cook_time varchar(255) not null,
-                method text not null,
-                serves varchar(255) not null,
+                author varchar(255),
+                title varchar(255),
+                cook_time varchar(255),
+                method text,
+                serves varchar(255),
                 primary key(recipe_id)
             ); 
         """
@@ -35,10 +34,8 @@ class FirstMigration(AbstractMigration):
             (   
                 ingredients_id serial,
                 recipe_id INT,
-                ingredients text not null,
-                quantity varchar(255) not null,
-                foreign key(recipe_id)
-                    references recipes (recipe_id)
+                ingredient text not null,
+                quantity varchar(255) not null
             );
             
             create unique index ingredients_sequence_uindex
@@ -54,10 +51,7 @@ class FirstMigration(AbstractMigration):
                 (   
                     method_id serial,
                     recipe_id INT,
-                    method text not null,
-                    foreign key(recipe_id)
-                        references recipes (recipe_id)
-                    
+                    method text not null                  
                 );
 
                 create unique index method_sequence_uindex

@@ -80,10 +80,6 @@ async def menuNode(bot, ctx):
         isObject = isinstance(value, NodeConfig)
         if value == "exit":
             optionDict[key] = exitMenu
-
-        elif value == "testing":
-            await loopMenu(bot, ctx)
-
         elif isObject or isDict:
             value = value.toDict() if isObject else value
             optionDict[key] = inputNodeFactory(**value)

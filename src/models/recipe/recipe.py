@@ -4,21 +4,15 @@ import json
 
 
 class Ingredient:
-    def __init__(self, quantity: str, ingredient: str) -> None:
-        self.quantity = quantity
+    def __init__(self, ingredient: str, quantity: str) -> None:
         self.ingredient = ingredient
-
-    def setQuantity(self, quantity):
         self.quantity = quantity
-
-    def setIngredient(self, ingredient):
-        self.ingredient = ingredient
 
 
 class Recipe:
     def __init__(
             self, author: str, title: str, ingredients: List[Ingredient], cookTime: str,
-            method: List[Tuple[int, str]], serves: int,
+            method: List[Tuple[int, str]], serves: int, recipe_id=None,
     ) -> None:
         self.author: str = author
         self.title: str = title
@@ -26,6 +20,7 @@ class Recipe:
         self.cookTime: str = cookTime
         self.method: List[Tuple] = method
         self.serves: int = serves
+        self.id = recipe_id
 
     def addIngredient(self, ingredient: Ingredient) -> None:
         self.ingredients.append(ingredient)

@@ -11,7 +11,6 @@ methodIcon = ":magic_wand:"
 servesIcon = ":shopping_bags:"
 exitIcon = ":white_check_mark:"
 
-
 mainRecipeMenu = {
     "title": "St. Germain's Kitchen",
     "description": "Choose an option to construct a recipe entry.",
@@ -24,7 +23,8 @@ mainRecipeMenu = {
                      f"`3` {timeIcon} Cook Time\n"
                      f"`4` {methodIcon} Method\n"
                      f"`5` {servesIcon} Serves\n"
-                     f"`6` {exitIcon} Exit\n",
+                     f"`6` {exitIcon} Exit\n"
+                     f"`7` {exitIcon} Testing\n",
             "inline": True
         },
         {
@@ -40,6 +40,12 @@ recipeTitlePrompt = {
     "description": "Type in a name for your recipe.",
     "color": green,
 
+}
+
+howManyIngredientsPrompt = {
+    "title": "How many different ingredients?",
+    "description": "Please enter a number for the total amount of different ingredients.",
+    "color": green,
 }
 
 ingredientsPrompt = {

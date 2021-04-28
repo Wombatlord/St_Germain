@@ -5,7 +5,7 @@ from typing import Optional, List, Union, Tuple
 from src.adaptors.repositories.repository import Repository
 
 from src.adaptors.database import db_adaptor as db
-from src.models.recipe.recipe import Recipe
+from src.models.recipe.recipe import Recipe, Ingredient
 
 
 class RecipeRepository(Repository):
@@ -21,11 +21,11 @@ class RecipeRepository(Repository):
 class PostgresRecipeRepository(RecipeRepository):
     tableName: str = "recipes"
     methodTable: str = "method"
+    ingredientsTable: str = "ingredients"
 
     columns: Tuple = (
         "author",
         "title",
-        "ingredients",
         "cook_time",
         "method",
         "serves"
@@ -33,20 +33,25 @@ class PostgresRecipeRepository(RecipeRepository):
 
     @classmethod
     def save(cls, recipe: Recipe) -> None:
+        cursor = db.get_cursor()
+
+        def saveIngredient(ingredient_: Ingredient):
+            ingredientSql = "INSERT INTO ingredients (ingredient, quantity, recipe_id) VALUES (%s, %s, %s)"
+            cursor.execute(ingredientSql, [ingredient_.ingredient, ingredient_.quantity, recipe.id])
+
         methodString = "method"
         columnsString = ", ".join(list(cls.columns))
 
         values = [
             recipe.author,
             recipe.title,
-            recipe.getIngredientsText(),
             recipe.cookTime,
             recipe.getMethodJson(),
             recipe.serves
         ]
         method = [recipe.getMethodJson()]
 
-        placeholders = ", ".join(["%s"] * 6)
+        placeholders = ", ".join(["%s"] * 5)
         placeholder = "%s"
 
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
@@ -55,13 +60,17 @@ class PostgresRecipeRepository(RecipeRepository):
         print(sql)
         print(values)
 
-        cursor = db.get_cursor()
         cursor.execute(sql, values)
         cursor.execute(methodSql, method)
+
+        for ingredient in recipe.ingredients:
+            print(ingredient.ingredient)
+            print(ingredient.quantity)
+            saveIngredient(ingredient)
         db.commit()
 
     @classmethod
-    def saveMethod(cls, recipe: Recipe) -> None:
+    def _saveMethod(cls, recipe: Recipe) -> None:
         methodString = "method"
         value = [recipe.getMethodJson()]
 
@@ -69,6 +78,17 @@ class PostgresRecipeRepository(RecipeRepository):
         sql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
         print(sql)
         print(value)
+        cursor = db.get_cursor()
+        cursor.execute(sql, value)
+        db.commit()
+
+    @classmethod
+    def _saveIngredients(cls, recipe: Recipe) -> None:
+        ingredientsString = "ingredients"
+        value = [recipe.getIngredientsText()]
+
+        placeholder = "%s"
+        sql = f"INSERT INTO {cls.ingredientsTable} ({ingredientsString}) VALUES ({placeholder})"
         cursor = db.get_cursor()
         cursor.execute(sql, value)
         db.commit()

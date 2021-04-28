@@ -108,12 +108,10 @@ class RecipeBuilderCog(commands.Cog):
 
             await context.author.send(f"{str(each + 1)}: Please enter an ingredient.")
             msg: Message = await bot_.wait_for("message", check=check)
-            # self._recipe.addIngredient(msg.content)
             self._ingredient.ingredient = msg.content
 
             await context.author.send(f"{str(each + 1)}: Please enter a total quantity.")
             msg: Message = await bot_.wait_for("message", check=check)
-            # self._recipe.addIngredient(msg.content)
             self._ingredient.quantity = msg.content
             self._recipe.ingredients.append(self._ingredient)
             # print(self._ingredient.ingredient)

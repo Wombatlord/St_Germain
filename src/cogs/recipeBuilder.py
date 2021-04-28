@@ -103,22 +103,22 @@ class RecipeBuilderCog(commands.Cog):
             """
             Maybe like this?
             """
-            ingredient: Ingredient = Ingredient(ingredient="",
-                                                quantity="")
+            self._ingredient: Ingredient = Ingredient(ingredient="",
+                                                      quantity="")
 
             await context.author.send(f"{str(each + 1)}: Please enter an ingredient.")
             msg: Message = await bot_.wait_for("message", check=check)
             # self._recipe.addIngredient(msg.content)
-            ingredient.ingredient = msg.content
+            self._ingredient.ingredient = msg.content
 
             await context.author.send(f"{str(each + 1)}: Please enter a total quantity.")
             msg: Message = await bot_.wait_for("message", check=check)
             # self._recipe.addIngredient(msg.content)
-            ingredient.quantity = msg.content
-            self._recipe.ingredients.append(ingredient)
+            self._ingredient.quantity = msg.content
+            self._recipe.ingredients.append(self._ingredient)
             # print(self._ingredient.ingredient)
             # print(self._ingredient.quantity)
-            print(ingredient)
+            print(self._ingredient)
 
         for each in self._recipe.ingredients:
             await context.author.send(each)

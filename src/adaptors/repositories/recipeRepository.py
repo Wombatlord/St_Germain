@@ -40,7 +40,6 @@ class PostgresRecipeRepository(RecipeRepository):
             cursor.execute(ingredientSql, [ingredient_.ingredient, ingredient_.quantity, recipe.id])
 
         methodString = "method"
-        ingredientsString = "ingredients"
         columnsString = ", ".join(list(cls.columns))
 
         values = [
@@ -51,14 +50,12 @@ class PostgresRecipeRepository(RecipeRepository):
             recipe.serves
         ]
         method = [recipe.getMethodJson()]
-        # ingredients = [recipe.getIngredientsText()]
 
         placeholders = ", ".join(["%s"] * 5)
         placeholder = "%s"
 
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
         methodSql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
-        ingredientsSql = f"INSERT INTO {cls.ingredientsTable} ({ingredientsString}) VALUES ({placeholder})"
 
         print(sql)
         print(values)
@@ -66,13 +63,10 @@ class PostgresRecipeRepository(RecipeRepository):
         cursor.execute(sql, values)
         cursor.execute(methodSql, method)
 
-        sqlRecipes = "INSERT INTO recipes (title) VALUES (%s)"
-        cursor.execute(sqlRecipes, [recipe.title])
         for ingredient in recipe.ingredients:
             print(ingredient.ingredient)
             print(ingredient.quantity)
             saveIngredient(ingredient)
-        # cursor.execute(ingredientsSql, ingredients)
         db.commit()
 
     @classmethod

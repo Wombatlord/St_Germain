@@ -69,7 +69,8 @@ class PostgresRecipeRepository(RecipeRepository):
         sqlRecipes = "INSERT INTO recipes (title) VALUES (%s)"
         cursor.execute(sqlRecipes, [recipe.title])
         for ingredient in recipe.ingredients:
-            print(ingredient)
+            print(ingredient.ingredient)
+            print(ingredient.quantity)
             saveIngredient(ingredient)
         # cursor.execute(ingredientsSql, ingredients)
         db.commit()

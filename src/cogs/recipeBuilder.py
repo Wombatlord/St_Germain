@@ -26,7 +26,7 @@ class RecipeBuilderCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._recipe: Optional[Recipe] = None
-        self._ingredient: Ingredient = Ingredient
+        self._ingredient: Optional[Ingredient] = None
 
     @commands.command()
     async def newRecipe(self, ctx: Context) -> None:
@@ -37,6 +37,8 @@ class RecipeBuilderCog(commands.Cog):
                                       cookTime="",
                                       method=[],
                                       serves=4)
+
+        ingredientList = []
 
         def check(message) -> bool:
             print(authorID)
@@ -101,16 +103,22 @@ class RecipeBuilderCog(commands.Cog):
             """
             Maybe like this?
             """
+            ingredient: Ingredient = Ingredient(ingredient="",
+                                                quantity="")
+
             await context.author.send(f"{str(each + 1)}: Please enter an ingredient.")
             msg: Message = await bot_.wait_for("message", check=check)
-            #self._recipe.addIngredient(msg.content)
-            self._ingredient.ingredient = msg.content
+            # self._recipe.addIngredient(msg.content)
+            ingredient.ingredient = msg.content
 
             await context.author.send(f"{str(each + 1)}: Please enter a total quantity.")
             msg: Message = await bot_.wait_for("message", check=check)
-            #self._recipe.addIngredient(msg.content)
-            self._ingredient.quantity = msg.content
-            self._recipe.ingredients.append(self._ingredient)
+            # self._recipe.addIngredient(msg.content)
+            ingredient.quantity = msg.content
+            self._recipe.ingredients.append(ingredient)
+            # print(self._ingredient.ingredient)
+            # print(self._ingredient.quantity)
+            print(ingredient)
 
         for each in self._recipe.ingredients:
             await context.author.send(each)

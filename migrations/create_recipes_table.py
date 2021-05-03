@@ -19,7 +19,6 @@ class FirstMigration(AbstractMigration):
                 author varchar(255),
                 title varchar(255),
                 cook_time varchar(255),
-                method text,
                 serves varchar(255),
                 primary key(recipe_id)
             ); 
@@ -34,8 +33,8 @@ class FirstMigration(AbstractMigration):
             (   
                 ingredients_id serial,
                 recipe_id INT,
-                ingredient text not null,
-                quantity varchar(255) not null
+                ingredient text,
+                quantity varchar(255)
             );
             
             create unique index ingredients_sequence_uindex

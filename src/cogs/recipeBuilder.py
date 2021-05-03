@@ -38,8 +38,6 @@ class RecipeBuilderCog(commands.Cog):
                                       method=[],
                                       serves=4)
 
-        ingredientList = []
-
         def check(message) -> bool:
             print(authorID)
             print(message.author.id)
@@ -64,7 +62,6 @@ class RecipeBuilderCog(commands.Cog):
 
         await menus.rootNode(self.bot, ctx)
         Repository.save(self._recipe)
-        # Repository.saveMethod(self._recipe)
 
         self.clean()
 
@@ -83,6 +80,7 @@ class RecipeBuilderCog(commands.Cog):
 
     def clean(self):
         self._recipe = None
+        self._ingredient = None
 
     async def titleInputHandler(self, bot_, context, message):
         self._recipe.setTitle(message.content)

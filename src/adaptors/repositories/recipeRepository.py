@@ -27,7 +27,6 @@ class PostgresRecipeRepository(RecipeRepository):
         "author",
         "title",
         "cook_time",
-        "method",
         "serves"
     )
 
@@ -46,27 +45,29 @@ class PostgresRecipeRepository(RecipeRepository):
             recipe.author,
             recipe.title,
             recipe.cookTime,
-            recipe.getMethodJson(),
             recipe.serves
         ]
         method = [recipe.getMethodJson()]
 
-        placeholders = ", ".join(["%s"] * 5)
+        placeholders = ", ".join(["%s"] * 4)
         placeholder = "%s"
 
         sql = f"INSERT INTO {cls.tableName} ({columnsString}) VALUES ({placeholders})"
-        methodSql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
-
         print(sql)
         print(values)
 
         cursor.execute(sql, values)
+        idSql = f"SELECT recipe_id FROM {cls.tableName} ORDER BY recipe_id DESC LIMIT 1;"
+        recipe.id = cursor.execute(idSql)
+
+        methodSql = f"INSERT INTO {cls.methodTable} ({methodString}) VALUES ({placeholder})"
         cursor.execute(methodSql, method)
 
         for ingredient in recipe.ingredients:
             print(ingredient.ingredient)
             print(ingredient.quantity)
             saveIngredient(ingredient)
+
         db.commit()
 
     @classmethod
